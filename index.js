@@ -63,4 +63,70 @@ async function StringDataStructure() {
         await client.quit();
     }
 }
-StringDataStructure()
+// StringDataStructure()
+
+async function sortedSet() { // ZADD,ZRANGE,ZRANK,ZREM
+    try{
+        await client.connect();
+        await client.zAdd("cart",[
+            {
+                score:100,
+                value:"Cart-1"
+            },
+            {
+                score:10,
+                value:"Cart-2"
+            },
+            {
+                score:300,
+                value:"Cart-3"
+            },
+            {
+                score:80,
+                value:"Cart-4"
+            },
+        ])
+
+        const getAllCartItem = await client.zRange("cart",0,-1)
+        console.log(getAllCartItem); // get all cart items
+
+        const getCart = await client.zRangeWithScores('cart',0,-1)
+        console.log("get all cart",getCart)
+
+    }catch(err){
+        console.log("err", err)
+    }finally{
+        await client.quit();
+    }
+}
+
+// sortedSet()
+
+async function hSet() {  // Hashes => HSET,HGET, HGETALL, HDEL
+    try{
+        await client.connect();
+        await client.hSet("Product:1",{
+            name:"Product 1",
+            description:"product 1 are highly rated..",
+            rating:"5"
+        })
+
+        const getProductRating = await client.hGet("Product:1","description");
+        // console.log("get rating",getProductRating)
+
+        
+        
+        await client.hDel("Product:1","descripition")
+
+        const getAllProductDetails = await client.hGetAll("Product:1");
+        console.log("get-All-Details",getAllProductDetails);
+
+        // pubsub concept , pipelining, transaction..
+    }catch(err){
+        console.log(err)
+    }finally{
+        client.quit();
+    }
+}
+
+hSet()
